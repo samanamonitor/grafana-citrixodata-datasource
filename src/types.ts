@@ -6,12 +6,21 @@ export interface ODataQuery extends DataQuery {
   timeProperty?: Property | null;
   properties?: Property[];
   filterConditions?: FilterCondition[];
+  count?: boolean;
 }
 
-export const FilterOperators: string[] = ['eq', 'ne', 'gt', 'ge', 'lt', 'le'];
+export const FilterOperators: string[] = ['eq', 'ne', 'gt', 'ge', 'lt', 'le', 'eq null', 'ne null'];
 
 export interface ODataOptions extends DataSourceJsonData {
   urlSpaceEncoding: string;
+  customerId: string;
+  clientId: string;
+  citrixCloudUrl: string;
+  authUrl: string;
+}
+
+export interface ODataSecureOptions {
+  clientSecret: string;
 }
 
 export enum URLSpaceEncoding {

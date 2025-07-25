@@ -1,19 +1,19 @@
 {
-  "name": "grafana-odata-datasource",
+  "name": "samm-citrixodata-datasource",
   "version": "1.1.1",
-  "description": "Loads data from OData (V4) compliant data sources to Grafana",
+  "description": "Loads data from Citrix Cloud data source to Grafana",
   "bugs": {
-    "url": "https://github.com/d-velop/grafana-odata-datasource/issues"
+    "url": "https://github.com/samanamonitor/samm-citrixodata-datasource/issues"
   },
-  "homepage": "https://github.com/d-velop/grafana-odata-datasource#readme",
+  "homepage": "https://github.com/samanamonitor/samm-citrixodata-datasource#readme",
   "repository": {
     "type": "git",
-    "url": "https://github.com/d-velop/grafana-odata-datasource.git"
+    "url": "https://github.com/samanamonitor/samm-citrixodata-datasource.git"
   },
   "keywords": [
     "Grafana",
     "Datasource",
-    "OData"
+    "CitrixOData"
   ],
   "scripts": {
     "build": "webpack -c ./.config/webpack/webpack.config.ts --env production",
@@ -28,7 +28,7 @@
     "sign": "npx --yes @grafana/sign-plugin@latest",
     "checkCompatibility": "npx @grafana/levitate@latest is-compatible --path src/module.ts --target @grafana/data,@grafana/ui,@grafana/runtime"
   },
-  "author": "d.velop AG",
+  "author": "d.velop AG modified by Fabian Baena @ Samana Group",
   "license": "Apache-2.0",
   "devDependencies": {
     "@grafana/eslint-config": "^8.1.0",

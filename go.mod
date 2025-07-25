@@ -1,10 +1,11 @@
-module github.com/d-velop/grafana-odata-datasource
+module github.com/samanamonitor/samm-citrixodata-datasource
 
 go 1.24.2
 
 require (
 	github.com/grafana/grafana-plugin-sdk-go v0.277.1
 	github.com/stretchr/testify v1.10.0
+	golang.org/x/oauth2 v0.29.0
 )
 
 require (

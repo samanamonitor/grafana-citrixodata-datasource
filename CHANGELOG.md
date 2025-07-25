@@ -1,5 +1,13 @@
 # Change Log
 
+## [1.1.2] 2025-07-25
+
+### Features
+- Added OAuth authentication compatible with Citrix Cloud [Authentication](https://developer-docs.citrix.com/en-us/citrix-cloud/accessing-monitor-service-data-citrix-cloud-external/accessing-monitor-service-data-citrix-cloud-external.html)
+- Added the ability to count records instead of returning data
+- Added the operators 'eq null' and 'ne null' to the filters
+
+
 ## [1.1.1] 2025-04-17
 
 ### Features

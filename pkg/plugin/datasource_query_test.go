@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/d-velop/grafana-odata-datasource/pkg/plugin/odata"
+	"github.com/samanamonitor/samm-citrixodata-datasource/pkg/plugin/odata"
 	"github.com/grafana/grafana-plugin-sdk-go/backend"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"

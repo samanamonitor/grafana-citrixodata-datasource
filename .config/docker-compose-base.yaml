@@ -1,7 +1,7 @@
 services:
   grafana:
     user: root
-    container_name: 'dvelop-odata-datasource'
+    container_name: 'samm-citrixodata-datasource'
 
     build:
       context: .
@@ -19,13 +19,13 @@ services:
     cap_add:
       - SYS_PTRACE
     volumes:
-      - ../dist:/var/lib/grafana/plugins/dvelop-odata-datasource
+      - ../dist:/var/lib/grafana/plugins/samm-citrixodata-datasource
       - ../provisioning:/etc/grafana/provisioning
-      - ..:/root/dvelop-odata-datasource
+      - ..:/root/samm-citrixodata-datasource
 
     environment:
       NODE_ENV: development
-      GF_LOG_FILTERS: plugin.dvelop-odata-datasource:debug
+      GF_LOG_FILTERS: plugin.samm-citrixodata-datasource:debug
       GF_LOG_LEVEL: debug
       GF_DATAPROXY_LOGGING: 1
-      GF_PLUGINS_ALLOW_LOADING_UNSIGNED_PLUGINS: dvelop-odata-datasource
+      GF_PLUGINS_ALLOW_LOADING_UNSIGNED_PLUGINS: samm-citrixodata-datasource

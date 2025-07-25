@@ -2,13 +2,31 @@ import {
   DataSourcePluginOptionsEditorProps,
   SelectableValue
 } from '@grafana/data';
-import {DataSourceHttpSettings, FieldSet, InlineField, InlineFieldRow, Select} from '@grafana/ui';
+import {FieldSet, InlineField, InlineFieldRow, InlineFormLabel, Select, Input, LegacyForms} from '@grafana/ui';
 import React, {ComponentType, useCallback} from 'react';
-import {ODataOptions, URLSpaceEncoding} from '../types';
+import {ODataOptions, URLSpaceEncoding, ODataSecureOptions} from '../types';
 
-type Props = DataSourcePluginOptionsEditorProps<ODataOptions>;
+type Props = DataSourcePluginOptionsEditorProps<ODataOptions, ODataSecureOptions>;
 
 export const ConfigEditor: ComponentType<Props> = ({ options, onOptionsChange }) => {
+  const { secureJsonFields } = options;
+  const secureJsonData = (options.secureJsonData)
+  const onResetClientSecret = () => {
+    onOptionsChange({
+      ...options,
+      secureJsonFields: { ...options.secureJsonFields, clientSecret: false },
+      secureJsonData: { ...options.secureJsonData, clientSecret: '' },
+    });
+  }
+  const onClientSecretChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    onOptionsChange({
+      ...options,
+      secureJsonData: { ...options.secureJsonData, clientSecret: e.target.value },
+    });
+  }, [onOptionsChange, options]);
+  const onODataPropsChange = <T extends keyof ODataOptions, V extends ODataOptions[T]>(key: T, value: V) => {
+    onOptionsChange({ ...options, jsonData: { ...options.jsonData, [key]: value } });
+  };
   const onURLSpaceEncodingChange = useCallback((option: SelectableValue<URLSpaceEncoding>) => {
       const urlSpaceEncoding = option.value;
       onOptionsChange({
@@ -25,12 +43,79 @@ export const ConfigEditor: ComponentType<Props> = ({ options, onOptionsChange })
 
   return (
     <>
-      <DataSourceHttpSettings
-        defaultUrl={'http://localhost:5000/odata'}
-        dataSourceConfig={options}
-        showAccessOptions={false}
-        onChange={onOptionsChange}
-      />
+      <div className="gf-form-group">
+        <h5 className="page-heading">Citrix Cloud</h5>
+          <div className="gf-form">
+            <InlineFormLabel
+              width={13}
+              tooltip="Citrix Cloud URL"
+              >
+                API URL
+            </InlineFormLabel>
+            <Input
+              width={40}
+              onChange={(v) => onODataPropsChange('citrixCloudUrl', v.currentTarget.value)}
+              placeholder='https://api.cloud.com/monitorodata'
+              value={options.jsonData.citrixCloudUrl}
+            />
+          </div>
+          <div className="gf-form">
+            <InlineFormLabel
+              width={13}
+              tooltip="Citrix Cloud Auth URL"
+              >
+                Auth URL
+            </InlineFormLabel>
+            <Input
+              width={40}
+              onChange={(v) => onODataPropsChange('authUrl', v.currentTarget.value)}
+              placeholder='https://api.cloud.com/cctrustoauth2/root/tokens/clients'
+              value={options.jsonData.authUrl}
+            />
+          </div>
+          <div className="gf-form">
+            <InlineFormLabel
+              width={13}
+              tooltip="Citrix Cloud Customer Id"
+              >
+                Customer Id
+            </InlineFormLabel>
+            <Input
+              width={40}
+              onChange={(v) => onODataPropsChange('customerId', v.currentTarget.value)}
+              placeholder='Customer Id'
+              value={options.jsonData.customerId}
+            />
+          </div>
+          <div className="gf-form">
+            <InlineFormLabel
+              width={13}
+              tooltip="Citrix Cloud Client Id"
+              >
+                Client Id
+            </InlineFormLabel>
+            <Input
+              width={40}
+              onChange={(v) => onODataPropsChange('clientId', v.currentTarget.value)}
+              placeholder='Client ID'
+              value={options.jsonData.clientId}
+            />
+          </div>
+          <div className="gf-form">
+            <LegacyForms.SecretFormField
+              labelWidth={13}
+              inputWidth={40}
+              required
+              label="Client secret"
+              aria-label="client secret"
+              placeholder='Client secret'
+              isConfigured={(secureJsonFields && secureJsonFields.clientSecret)}
+              onReset={onResetClientSecret}
+              onChange={onClientSecretChange}
+              value={secureJsonData?.clientSecret}
+            />
+          </div>
+      </div>
       <div className='gf-form-group'>
         <h3 className='page-heading'>Additional settings</h3>
         <FieldSet>
@@ -57,6 +142,6 @@ export const ConfigEditor: ComponentType<Props> = ({ options, onOptionsChange })
           </InlineFieldRow>
         </FieldSet>
       </div>
-      </>
+    </>
   );
 };

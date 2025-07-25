@@ -6,7 +6,7 @@ import (
 	"encoding/xml"
 	"testing"
 
-	"github.com/d-velop/grafana-odata-datasource/pkg/plugin/odata"
+	"github.com/samanamonitor/samm-citrixodata-datasource/pkg/plugin/odata"
 	"github.com/grafana/grafana-plugin-sdk-go/backend"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
@@ -35,6 +35,7 @@ func TestNewODataSourceInstanceSuccess(t *testing.T) {
 	// Act
 	dsi, err := newDatasourceInstance(context.TODO(), backend.DataSourceInstanceSettings{
 		URL: url,
+		JSONData: []byte("{\"citrixCloudUrl\": \"http://localhost:8080\"}"),
 	})
 
 	// Assert

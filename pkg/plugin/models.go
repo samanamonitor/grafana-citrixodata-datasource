@@ -5,6 +5,7 @@ type queryModel struct {
 	TimeProperty     *property         `json:"timeProperty"`
 	Properties       []property        `json:"properties"`
 	FilterConditions []filterCondition `json:"filterConditions"`
+	Count            bool              `json:"count,omitempty"`
 }
 
 type schema struct {

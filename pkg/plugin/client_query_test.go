@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/d-velop/grafana-odata-datasource/pkg/plugin/odata"
+	"github.com/samanamonitor/samm-citrixodata-datasource/pkg/plugin/odata"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -86,7 +86,7 @@ func TestBuildQueryUrl(t *testing.T) {
 	for _, table := range tables {
 		t.Run(table.name, func(t *testing.T) {
 			// Act
-			var builtUrl, err = buildQueryUrl(table.baseUrl, table.entitySet, table.properties, table.filterConditions, "+")
+			var builtUrl, err = buildQueryUrl(table.baseUrl, table.entitySet, table.properties, table.filterConditions, false, "+")
 
 			// Assert
 			assert.NoError(t, err)
@@ -132,7 +132,7 @@ func TestGetEntities(t *testing.T) {
 			client := GetOC("*", table.handlerCallback)
 
 			// Act
-			resp, err := client.Get("Temperatures", []property{aProperty(int32Prop)}, someFilterConditions(int32Eq5))
+			resp, err := client.Get("Temperatures", []property{aProperty(int32Prop)}, someFilterConditions(int32Eq5), false)
 
 			// Assert
 			if table.expectedError == nil {

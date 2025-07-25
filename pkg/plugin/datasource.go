@@ -7,14 +7,18 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 
-	"github.com/d-velop/grafana-odata-datasource/pkg/plugin/odata"
+	"github.com/samanamonitor/samm-citrixodata-datasource/pkg/plugin/odata"
+	"github.com/samanamonitor/samm-citrixodata-datasource/pkg/plugin/citrixcloud"
 	"github.com/grafana/grafana-plugin-sdk-go/backend"
 	"github.com/grafana/grafana-plugin-sdk-go/backend/datasource"
-	"github.com/grafana/grafana-plugin-sdk-go/backend/httpclient"
 	"github.com/grafana/grafana-plugin-sdk-go/backend/instancemgmt"
 	"github.com/grafana/grafana-plugin-sdk-go/backend/log"
 	"github.com/grafana/grafana-plugin-sdk-go/data"
+
+	"golang.org/x/oauth2/clientcredentials"
+	"golang.org/x/oauth2"
 )
 
 var (
@@ -29,27 +33,36 @@ type ODataSource struct {
 
 type DatasourceSettings struct {
 	URLSpaceEncoding string `json:"urlSpaceEncoding"`
+	CitrixCloudUrl   string `json:"citrixCloudUrl"`
+	AuthUrl          string `json:"authUrl"`
+	CustomerId       string `json:"customerId"`
+	ClientId         string `json:"clientId"`
 }
 
 func newDatasourceInstance(ctx context.Context, settings backend.DataSourceInstanceSettings) (instancemgmt.Instance, error) {
-	clientOptions, err := settings.HTTPClientOptions(ctx)
-	if err != nil {
-		return nil, err
-	}
-	client, err := httpclient.New(clientOptions)
-	if err != nil {
-		return nil, err
-	}
-
 	var dsSettings DatasourceSettings
 	if settings.JSONData != nil && len(settings.JSONData) > 1 {
 		if err := json.Unmarshal(settings.JSONData, &dsSettings); err != nil {
 			return nil, err
 		}
 	}
+	config := clientcredentials.Config{
+		ClientID:       dsSettings.ClientId,
+		ClientSecret:   settings.DecryptedSecureJSONData["clientSecret"],
+		TokenURL:       dsSettings.AuthUrl,
+		Scopes:         []string{},
+		EndpointParams: url.Values{},
+		AuthStyle:      oauth2.AuthStyleInParams,
+	}
+	ctx = context.WithValue(context.Background(), oauth2.HTTPClient, nil)
+	client := config.Client(ctx)
+	client.Transport = &citrixcloud.Transport{
+		Source: config.TokenSource(ctx),
+		Base:   nil,
+	}
 
 	return &ODataSourceInstance{
-		&ODataClientImpl{client, settings.URL, dsSettings.URLSpaceEncoding},
+		&ODataClientImpl{client, dsSettings.CitrixCloudUrl, dsSettings.URLSpaceEncoding, dsSettings.CustomerId},
 	}, nil
 }
 
@@ -141,19 +154,24 @@ func (ds *ODataSource) query(clientInstance ODataClient, query backend.DataQuery
 	}
 	frame.Meta.PreferredVisualization = data.VisTypeTable
 
-	if qm.TimeProperty != nil {
-		log.DefaultLogger.Debug("Time property configured", "name", qm.TimeProperty.Name)
-		labels, err := data.LabelsFromString("time=" + qm.TimeProperty.Name)
-		if err != nil {
-			response.Error = err
-			return response
+	if qm.Count {
+		field := data.NewField("Count", nil, []*int64{})
+		frame.Fields = append(frame.Fields, field)
+	} else {
+		if qm.TimeProperty != nil {
+			log.DefaultLogger.Debug("Time property configured", "name", qm.TimeProperty.Name)
+			labels, err := data.LabelsFromString("time=" + qm.TimeProperty.Name)
+			if err != nil {
+				response.Error = err
+				return response
+			}
+			field := data.NewField(qm.TimeProperty.Name, labels, odata.ToArray(qm.TimeProperty.Type))
+			frame.Fields = append(frame.Fields, field)
 		}
-		field := data.NewField(qm.TimeProperty.Name, labels, odata.ToArray(qm.TimeProperty.Type))
-		frame.Fields = append(frame.Fields, field)
-	}
-	for _, prop := range qm.Properties {
-		field := data.NewField(prop.Name, nil, odata.ToArray(prop.Type))
-		frame.Fields = append(frame.Fields, field)
+		for _, prop := range qm.Properties {
+			field := data.NewField(prop.Name, nil, odata.ToArray(prop.Type))
+			frame.Fields = append(frame.Fields, field)
+		}
 	}
 
 	props := qm.Properties
@@ -161,7 +179,7 @@ func (ds *ODataSource) query(clientInstance ODataClient, query backend.DataQuery
 		props = append(props, *qm.TimeProperty)
 	}
 	resp, err := clientInstance.Get(qm.EntitySet.Name, props,
-		append(qm.FilterConditions, TimeRangeToFilter(query.TimeRange, qm.TimeProperty)...))
+		append(qm.FilterConditions, TimeRangeToFilter(query.TimeRange, qm.TimeProperty)...), qm.Count)
 	if err != nil {
 		response.Error = err
 		return response
@@ -188,30 +206,37 @@ func (ds *ODataSource) query(clientInstance ODataClient, query backend.DataQuery
 
 	log.DefaultLogger.Debug("query complete", "noOfEntities", len(result.Value))
 
-	for _, entry := range result.Value {
+	if qm.Count {
 		var values []interface{}
-
-		if qm.TimeProperty != nil {
-			values = make([]interface{}, len(qm.Properties)+1)
-			values[0] = odata.MapValue(entry[qm.TimeProperty.Name], qm.TimeProperty.Type)
-		} else {
-			values = make([]interface{}, len(qm.Properties))
-		}
-
-		for i, prop := range qm.Properties {
-			index := i
-			if qm.TimeProperty != nil {
-				index++
-			}
-
-			if value, ok := entry[prop.Name]; ok {
-				values[index] = odata.MapValue(value, prop.Type)
-			} else {
-				values[index] = nil
-			}
-		}
+		values = make([]interface{}, 1)
+		values[0] = &result.Count
 		frame.AppendRow(values...)
+	} else {
+		for _, entry := range result.Value {
+			var values []interface{}
+
+			if qm.TimeProperty != nil {
+				values = make([]interface{}, len(qm.Properties)+1)
+				values[0] = odata.MapValue(entry[qm.TimeProperty.Name], qm.TimeProperty.Type)
+			} else {
+				values = make([]interface{}, len(qm.Properties))
+			}
+
+			for i, prop := range qm.Properties {
+				index := i
+				if qm.TimeProperty != nil {
+					index++
+				}
+				if value, ok := entry[prop.Name]; ok {
+					values[index] = odata.MapValue(value, prop.Type)
+				} else {
+					values[index] = nil
+				}
+			}
+			frame.AppendRow(values...)
+		}
 	}
+
 	response.Frames = append(response.Frames, frame)
 	return response
 }

@@ -1,28 +1,24 @@
-# Grafana OData Data Source
-Visualize data from OData data sources with Grafana.
+# Grafana Samm Citrix Cloud Data Source
+Visualize data from Citrix Cloud data source with Grafana.
 
 ## About
-This is a Grafana data source for showing data from OData V4 compliant data sources.
-
-It was originally developed for internal purposes and is now made available to the open source community.
+This is a Grafana data source for showing data from CitrixCloud data source.
 
 ## Getting started
 Open Grafana and go to Configuration / Data Sources. Click `Add data source` button.
 
-Enter `OData` into the filter input field and select the OData Data Source.
+Enter `CitrixCloud` into the filter input field and select the CitrixCloud Data Source.
 
-![Add Data Source](https://raw.githubusercontent.com/d-velop/grafana-odata-datasource/master/src/img/AddDataSource.png)
+![Add Data Source](https://raw.githubusercontent.com/samanamonitor/samm-citrixodata-datasource/master/src/img/AddDataSource.png)
 
-Provide the URL of your OData Service Root and click `Save & test` to test the connection.
+Provide the URL of Citrix Cloud Service Root, credentials and click `Save & test` to test the connection.
 
 The `URL space encoding` setting can be used to specify the encoding of spaces in URLs. `Percent` uses `%20` (see RFC
 3986), while `Plus` uses `+` (used in form data). E.g. `$filter=value%20EQ%201` vs. `$filter=value+EQ+1`.
 
-Add other connection settings, such as auth settings, as necessary.
+To use the data source, create a new query and select the newly created CitrixCloud data source.
 
-To use the data source, create a new query and select the newly created OData data source.
-
-![CreateQuery.png](https://raw.githubusercontent.com/d-velop/grafana-odata-datasource/master/src/img/CreateQuery.png)
+![CreateQuery.png](https://raw.githubusercontent.com/d-velop/samm-odata-datasource/master/src/img/CreateQuery.png)
 
 Choose an entity set, an appropriate time property, and the metric you want to view.
 Now you should be able to see data for the selected time frame.
@@ -32,9 +28,11 @@ Now you should be able to see data for the selected time frame.
 * [Build a Grafana data source plugin](https://grafana.com/tutorials/build-a-data-source-plugin/) - a tutorial that 
   explains how to develop your own data source plugin.
 * [OData](https://www.odata.org) - the ISO/IEC approved, OASIS standard for building and using data-driven RESTful APIs
+* [Citrix](https://developer-docs.citrix.com/en-us/monitor-service-odata-api/) - Citrix Cloud OData Monitoring APIs
 
 ## Contributing
-This project is maintained by d-velop but is looking for contributors. If you consider contributing to this project
+This project has been created based on d-velop's work on OData plugin.
+The OData plugin project is maintained by d-velop but is looking for contributors. If you consider contributing to this project
 please read [CONTRIBUTING](https://raw.githubusercontent.com/d-velop/grafana-odata-datasource/master/CONTRIBUTING.md)
 and [DEVELOPING](https://raw.githubusercontent.com/d-velop/grafana-odata-datasource/master/DEVELOPING.md) for details on
 how to get started.

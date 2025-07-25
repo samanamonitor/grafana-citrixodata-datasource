@@ -21,10 +21,14 @@ const (
 	Metadata = "$metadata"
 	Filter   = "$filter"
 	Select   = "$select"
+	Count    = "$count"
+	Top      = "$top"
+	Skip     = "$skip"
 )
 
 type Response struct {
 	Value []map[string]interface{} `json:"value"`
+	Count int64                    `json:"@odata.count"`
 }
 
 type Edmx struct {

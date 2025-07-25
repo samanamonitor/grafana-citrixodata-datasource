@@ -1,5 +1,5 @@
-import React, { PureComponent } from 'react';
-import { Button, InlineFormLabel, LegacyForms, Input } from '@grafana/ui';
+import React, { FormEvent, PureComponent } from 'react';
+import { Button, InlineFormLabel, LegacyForms, Input, Checkbox } from '@grafana/ui';
 import { QueryEditorProps, SelectableValue } from '@grafana/data';
 import { ODataSource } from '../DataSource';
 import { EntitySet, FilterCondition, Metadata, ODataOptions, ODataQuery, Property, FilterOperators } from '../types';
@@ -14,6 +14,7 @@ interface State {
   timeProperties: Array<SelectableValue<Property>>;
   allProperties: Array<SelectableValue<Property>>;
   filterOperators: Array<SelectableValue<string>>;
+  count: boolean;
 }
 
 enum PropertyKind {
@@ -33,6 +34,7 @@ export class QueryEditor extends PureComponent<Props, State> {
       timeProperties: [],
       allProperties: [],
       filterOperators: [],
+      count: props.query.count || false,
     };
   }
 
@@ -123,6 +125,13 @@ export class QueryEditor extends PureComponent<Props, State> {
     }
     this.update();
   };
+
+  onCountChange = (value: FormEvent<HTMLInputElement>) => {
+    this.props.query.count = !this.props.query.count;
+    this.setState({
+      count: ! this.state.count,
+    })
+  }
 
   addProperty = () => {
     const properties: Property[] = this.props.query.properties!;
@@ -277,6 +286,17 @@ export class QueryEditor extends PureComponent<Props, State> {
               options={timeProperties}
               isSearchable={false}
             />
+          </div>
+        </div>
+        <div className="gf-form-inline">
+          <div className="gf-form">
+            <InlineFormLabel width={8} tooltip="Count elements.">
+              Count
+            </InlineFormLabel>
+            <Checkbox
+              value={this.state.count}
+              onChange={this.onCountChange}
+              />
           </div>
         </div>
         {listProperties}

@@ -1,8 +1,8 @@
 {
   "$schema": "https://raw.githubusercontent.com/grafana/grafana/main/docs/sources/developers/plugins/plugin.schema.json",
   "type": "datasource",
-  "name": "OData",
-  "id": "dvelop-odata-datasource",
+  "name": "CitrixCloud",
+  "id": "samm-citrixodata-datasource",
   "metrics": true,
   "backend": true,
   "annotations": true,
@@ -10,11 +10,11 @@
   "alerting": true,
   "streaming": false,
   "tracing": false,
-  "executable": "gpx_odata-datasource",
+  "executable": "gpx_citrixodata-datasource",
   "info": {
-    "description": "OData data source for Grafana",
+    "description": "Citrix Cloud OData data source for Grafana",
     "author": {
-      "name": "d.velop AG",
+      "name": "d.velop AG, modified by Samana Group",
       "url": "https://www.d-velop.de"
     },
     "keywords": [
@@ -24,17 +24,17 @@
       "datasource"
     ],
     "logos": {
-      "small": "img/ODataLogo.svg",
-      "large": "img/ODataLogo.svg"
+      "small": "img/SammCitrixLogo.svg",
+      "large": "img/SammCitrixLogo.svg"
     },
     "links": [
       {
         "name": "Website",
-        "url": "https://github.com/d-velop/grafana-odata-datasource"
+        "url": "https://github.com/samanamonitor/samm-citrixodata-datasource"
       },
       {
         "name": "License",
-        "url": "https://github.com/d-velop/grafana-odata-datasource/blob/master/LICENSE"
+        "url": "https://github.com/samanamonitor/samm-citrixodata-datasource/blob/master/LICENSE"
       },
       {
         "name": "Learn more on OData",
