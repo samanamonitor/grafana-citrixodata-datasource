@@ -18,7 +18,7 @@ The `URL space encoding` setting can be used to specify the encoding of spaces i
 
 To use the data source, create a new query and select the newly created CitrixCloud data source.
 
-![CreateQuery.png](https://raw.githubusercontent.com/samanamonitor/samm-odata-datasource/master/src/img/CreateQuery.png)
+![CreateQuery.png](https://raw.githubusercontent.com/samanamonitor/samm-citrixodata-datasource/master/src/img/CreateQuery.png)
 
 Choose an entity set, an appropriate time property, and the metric you want to view.
 Now you should be able to see data for the selected time frame.
