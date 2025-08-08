@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.1.3] 2025-08-08
+
+### Features
+- Fix bug when updating filters. The values would not change when using the "recording rule" or alert features
+- Added default values for CitrixCloudUrl and AuthUrl
+- Added "time" field for "count" function
+
 ## [1.1.2] 2025-07-25
 
 ### Features
