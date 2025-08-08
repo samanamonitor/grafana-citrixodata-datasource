@@ -208,6 +208,7 @@ export class QueryEditor extends PureComponent<Props, State> {
                     (item) => item.value?.name === filterCondition.property.name
                   )!.value!.type;
                 }
+                this.props.onChange(this.props.query)
               }}
               onBlur={this.props.onRunQuery}
               options={allProperties}
@@ -229,6 +230,7 @@ export class QueryEditor extends PureComponent<Props, State> {
                 if (item.value) {
                   filterCondition.operator = item.value! as string;
                 }
+                this.props.onChange(this.props.query)
               }}
               onBlur={this.props.onRunQuery}
               options={filterOperators}
@@ -247,6 +249,7 @@ export class QueryEditor extends PureComponent<Props, State> {
                 if (item.currentTarget.value) {
                   filterCondition.value = item.currentTarget.value;
                 }
+                this.props.onChange(this.props.query)
               }}
               onBlur={this.props.onRunQuery}
             />
