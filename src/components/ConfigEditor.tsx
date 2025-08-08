@@ -11,6 +11,12 @@ type Props = DataSourcePluginOptionsEditorProps<ODataOptions, ODataSecureOptions
 export const ConfigEditor: ComponentType<Props> = ({ options, onOptionsChange }) => {
   const { secureJsonFields } = options;
   const secureJsonData = (options.secureJsonData)
+
+  options.jsonData = {
+    ...options.jsonData,
+    authUrl: options.jsonData.authUrl ?? "https://api.cloud.com/cctrustoauth2/root/tokens/clients",
+    citrixCloudUrl: options.jsonData.citrixCloudUrl ?? "https://api.cloud.com/monitorodata",
+  }
   const onResetClientSecret = () => {
     onOptionsChange({
       ...options,
