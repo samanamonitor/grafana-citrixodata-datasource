@@ -8,6 +8,7 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+	"time"
 
 	"github.com/samanamonitor/samm-citrixodata-datasource/pkg/plugin/odata"
 	"github.com/samanamonitor/samm-citrixodata-datasource/pkg/plugin/citrixcloud"
@@ -155,8 +156,8 @@ func (ds *ODataSource) query(clientInstance ODataClient, query backend.DataQuery
 	frame.Meta.PreferredVisualization = data.VisTypeTable
 
 	if qm.Count {
-		field := data.NewField("Count", nil, []*int64{})
-		frame.Fields = append(frame.Fields, field)
+		frame.Fields = append(frame.Fields, data.NewField("T", nil, []time.Time{}))
+		frame.Fields = append(frame.Fields, data.NewField("Count", nil, []*int64{}))
 	} else {
 		if qm.TimeProperty != nil {
 			log.DefaultLogger.Debug("Time property configured", "name", qm.TimeProperty.Name)
@@ -208,8 +209,9 @@ func (ds *ODataSource) query(clientInstance ODataClient, query backend.DataQuery
 
 	if qm.Count {
 		var values []interface{}
-		values = make([]interface{}, 1)
-		values[0] = &result.Count
+		values = make([]interface{}, 2)
+		values[0] = time.Now()
+		values[1] = &result.Count
 		frame.AppendRow(values...)
 	} else {
 		for _, entry := range result.Value {
